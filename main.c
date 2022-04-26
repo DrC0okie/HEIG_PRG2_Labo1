@@ -1,3 +1,18 @@
+/*
+-----------------------------------------------------------------------------------
+Nom du fichier : main.cpp
+Nom du labo    : Laboratoire no. 1
+Auteur(s)      : Patrick Furrer Timothée Van Hove
+Date creation  : 25 avril 2022
+But            : Génréer une planche de Galton et afficher un histograme
+                 représentant la répartition
+
+Remarque(s)    : <à compléter>
+
+Compilateur    : Mingw-w64 gcc 11.2.0
+-----------------------------------------------------------------------------------
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
