@@ -30,6 +30,8 @@ void viderBuffer(void);
 
 unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
                            unsigned max);
+void imprimerCompteurs(unsigned* tableau, unsigned nbRangees);
+void imprimerLigneCompteurs(unsigned* tableau, unsigned numLigne);
 
 unsigned separerGauche(unsigned valeur);
 
@@ -70,13 +72,14 @@ void viderBuffer(void) {
 unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
                            unsigned max) {
    printf("%s [%u - %u] :", msg, min, max);
-   unsigned resultat = 0;
-   while (scanf("%u", &resultat) != 1 || resultat < min || resultat > max) {
+   unsigned entree = 0;
+   while (scanf("%u", &entree) != 1 || entree < min || entree > max) {
       viderBuffer();
       printf("%s\n", msgErreur);
       printf("%s [%u - %u] :", msg, min, max);
    }
    viderBuffer();
+   return entree;
 }
 
 
@@ -88,4 +91,18 @@ unsigned separerGauche(unsigned valeur) {
         }
     }
     return valeurGauche;
+}
+void imprimerCompteurs(unsigned* tableau, unsigned nbRangees)
+{
+   for (unsigned i = 1; i <= nbRangees; ++i) {
+      imprimerLigneCompteurs(tableau, i);
+   }
+}
+
+void imprimerLigneCompteurs(unsigned* tableau, unsigned numLigne)
+{
+   for (unsigned i = 1; i <= numLigne; ++i) {
+      printf("%u ", tableau[(numLigne-1) + (i-1)]);
+   }
+   printf("\n");
 }
