@@ -61,6 +61,9 @@ int main(void) {
     }
     //nettoyage de la mémoire
     free(tabCompteur);
+
+   unsigned tableauTest[] = {123,120,3,80,20,23,40,40,40,3};
+   imprimerCompteurs(tableauTest, 4);
    return EXIT_SUCCESS;
 }
 
