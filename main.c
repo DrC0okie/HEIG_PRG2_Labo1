@@ -17,6 +17,10 @@ Compilateur    : Mingw-w64 gcc 11.2.0
 #include <stdlib.h>
 #include <string.h>
 
+#define NB_CLOUS(ETAGE) ((ETAGE)*((ETAGE)+1)/2)
+#define ENFANT_GAUCHE(ETAGE, PARENT) ((PARENT) + (ETAGE))
+#define ENFANT_DROITE(ETAGE, PARENT) ((PARENT) + (ETAGE) + 1)
+
 const unsigned MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20;
 const char *MSG_ERREUR = "Saisie incorrecte. Veuillez SVP recommencer.";
 const char *MSG_BILLES = "Entrez le nombre de billes";
@@ -27,11 +31,35 @@ void viderBuffer(void);
 unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
                            unsigned max);
 
-int main(void) {
-   entreeUtilisateur(MSG_BILLES, MSG_ERREUR, MIN_BILLE, MAX_BILLE);
-   entreeUtilisateur(MSG_RANGEES, MSG_ERREUR, MIN_RANGEE, MAX_RANGEE);
+unsigned separerGauche(unsigned valeur);
 
-   return 0;
+int main(void) {
+    unsigned nbBilles =entreeUtilisateur(MSG_BILLES, MSG_ERREUR, MIN_BILLE, MAX_BILLE);
+    unsigned nbEtage = entreeUtilisateur(MSG_RANGEES, MSG_ERREUR, MIN_RANGEE, MAX_RANGEE);
+   nbEtage = 10;
+    nbBilles = 30000;
+   unsigned* tabCompteur = calloc(NB_CLOUS(nbEtage) , sizeof(unsigned));
+    tabCompteur[0] = nbBilles;
+    int i = 0;
+    // Parcours du tableau
+    for( unsigned etage = 0, index = 0; etage < nbEtage; ++etage) {
+        for (unsigned colonne =0; colonne < etage; ++colonne, ++index) {
+            unsigned valeurGauche = separerGauche(tabCompteur[index]);
+            tabCompteur[ENFANT_GAUCHE(etage, index)] += valeurGauche;
+            tabCompteur[ENFANT_DROITE(etage, index)] += tabCompteur[index] - valeurGauche;
+        }
+
+        printf("\n");
+    }
+    for( unsigned etage = 0, index = 0; etage <= nbEtage; ++etage) {
+        for (unsigned colonne =0; colonne < etage; ++colonne, ++index) {
+            printf("valeur %d ", tabCompteur[index]);
+        }
+        printf("\n");
+    }
+    //nettoyage de la mémoire
+    free(tabCompteur);
+   return EXIT_SUCCESS;
 }
 
 void viderBuffer(void) {
@@ -49,4 +77,15 @@ unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
       printf("%s [%u - %u] :", msg, min, max);
    }
    viderBuffer();
+}
+
+
+unsigned separerGauche(unsigned valeur) {
+    unsigned valeurGauche = 0;
+    for(unsigned i = 0; i < valeur; ++i) {
+        if(rand() % 2) {
+            ++valeurGauche;
+        }
+    }
+    return valeurGauche;
 }
