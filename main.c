@@ -17,42 +17,36 @@ Compilateur    : Mingw-w64 gcc 11.2.0
 #include <stdlib.h>
 #include <string.h>
 
-const unsigned MIN = 1000, MAX = 30000;
-#define MSG_UTILISATEUR "Entrez le nombre de billes [%u - %u] :",MIN, MAX
+const unsigned MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20;
+const char *MSG_ERREUR = "Saisie incorrecte. Veuillez SVP recommencer.";
+const char *MSG_BILLES = "Entrez le nombre de billes";
+const char *MSG_RANGEES = "Entrez le nombre de rangees de compteurs";
 
 void viderBuffer(void);
 
-int main(void) {
-   //---------Solution 1 : si 1000a est considéré comme entrée valide
-//   unsigned nbBilles;
-//   printf(MSG_UTILISATEUR);
-//   while (scanf("%u", &nbBilles) != 1 || nbBilles < MIN || nbBilles > MAX) {
-//      viderBuffer();
-//      printf("%s\n", "Saisie incorrecte. Veuillez SVP recommencer.");
-//      printf(MSG_UTILISATEUR);
-//   }
-//   viderBuffer();
+unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
+                           unsigned max);
 
-//---------Solution 2 : si 1000a est considéré comme entrée invalide
-//   long nbBilles;
-//   char buffer[1024];
-//   int lectureOk;
-//   do{
-//      printf(MSG_UTILISATEUR);
-//      if (!fgets(buffer, 7, stdin))
-//         return EXIT_FAILURE;
-//      char *endptr;
-//      errno = 0; // reset error number
-//      nbBilles = strtol(buffer, &endptr, 10);
-//      if(endptr != buffer && errno == 0 && (*endptr == '\n'))
-//         lectureOk = 1;
-//      else
-//         printf("%s\n", "Saisie incorrecte. Veuillez SVP recommencer.");
-//   } while (!lectureOk); // repeat until we got a valid number
+int main(void) {
+   entreeUtilisateur(MSG_BILLES, MSG_ERREUR, MIN_BILLE, MAX_BILLE);
+   entreeUtilisateur(MSG_RANGEES, MSG_ERREUR, MIN_RANGEE, MAX_RANGEE);
 
    return 0;
 }
+
 void viderBuffer(void) {
    int c;
    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
+                           unsigned max) {
+   printf("%s [%u - %u] :", msg, min, max);
+   unsigned resultat = 0;
+   while (scanf("%u", &resultat) != 1 || resultat < min || resultat > max) {
+      viderBuffer();
+      printf("%s\n", msgErreur);
+      printf("%s [%u - %u] :", msg, min, max);
+   }
+   viderBuffer();
 }
