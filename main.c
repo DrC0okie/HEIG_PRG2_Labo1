@@ -15,6 +15,7 @@ Compilateur    : Mingw-w64 gcc 11.2.0
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 
 const unsigned MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20;
@@ -23,82 +24,82 @@ const char *MSG_BILLES = "Entrez le nombre de billes";
 const char *MSG_RANGEES = "Entrez le nombre de rangees de compteurs";
 
 void viderBuffer(void);
+
 unsigned nbClous(unsigned nbEtage);
+
 unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
                            unsigned max);
-void parcoursBille(unsigned* tab, unsigned nbEtage);
-void imprimerCompteurs(unsigned *tableau, unsigned nbRangees);
 
-void imprimerLigneCompteurs(unsigned *tableau, unsigned numLigne);
+void parcoursBille(unsigned *tab, unsigned nbEtage);
+
+void imprimerCompteurs(unsigned *tabCompteur, unsigned nbEtage);
+
 
 
 int main(void) {
-    unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MSG_ERREUR, MIN_BILLE, MAX_BILLE);
-    unsigned nbEtage =  entreeUtilisateur(MSG_RANGEES, MSG_ERREUR, MIN_RANGEE, MAX_RANGEE);
+   unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MSG_ERREUR, MIN_BILLE,
+                                         MAX_BILLE);
+   unsigned nbEtage = entreeUtilisateur(MSG_RANGEES, MSG_ERREUR, MIN_RANGEE,
+                                        MAX_RANGEE);
 
-    unsigned *tabCompteur = calloc(nbClous(nbEtage), sizeof(unsigned));
+   unsigned *tabCompteur = calloc(nbClous(nbEtage), sizeof(unsigned));
 
 
-    for(unsigned bille = 0; bille < nbBilles; ++bille) {
-        parcoursBille(tabCompteur, nbEtage);
-    }
-    //affichage tableau (pas beau)
-    for (unsigned etage = 0, index = 0; etage <= nbEtage; ++etage) {
-        for (unsigned colonne = 0; colonne < etage; ++colonne, ++index) {
-            printf("valeur %d ", tabCompteur[index]);
-        }
-        printf("\n");
-    }
+   for (unsigned bille = 0; bille < nbBilles; ++bille) {
+      parcoursBille(tabCompteur, nbEtage);
+   }
 
-    free(tabCompteur);
-    return EXIT_SUCCESS;
+   imprimerCompteurs(tabCompteur, nbEtage);
+   free(tabCompteur);
+   return EXIT_SUCCESS;
 }
 
 void viderBuffer(void) {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+   int c;
+   while ((c = getchar()) != '\n' && c != EOF);
 }
 
 unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
                            unsigned max) {
-    printf("%s [%u - %u] :", msg, min, max);
-    unsigned entree = 0;
-    while (scanf("%u", &entree) != 1 || entree < min || entree > max) {
-        viderBuffer();
-        printf("%s\n", msgErreur);
-        printf("%s [%u - %u] :", msg, min, max);
-    }
-    viderBuffer();
-    return entree;
-}
-
-void imprimerCompteurs(unsigned *tableau, unsigned nbRangees) {
-    for (unsigned i = 1; i <= nbRangees; ++i) {
-        imprimerLigneCompteurs(tableau, i);
-    }
-}
-
-void imprimerLigneCompteurs(unsigned *tableau, unsigned numLigne) {
-    for (unsigned i = 1; i <= numLigne; ++i) {
-        printf("%u ", tableau[(numLigne - 1) + (i - 1)]);
-    }
-    printf("\n");
+   printf("%s [%u - %u] :", msg, min, max);
+   unsigned entree = 0;
+   while (scanf("%u", &entree) != 1 || entree < min || entree > max) {
+      viderBuffer();
+      printf("%s\n", msgErreur);
+      printf("%s [%u - %u] :", msg, min, max);
+   }
+   viderBuffer();
+   return entree;
 }
 
 
-void parcoursBille(unsigned* tab, unsigned nbEtage) {
-    unsigned pos = 0;
-    for( unsigned etage = 1; etage <= nbEtage; ++etage) {
-        ++tab[pos];
-        if(rand() % 2) ++pos;
+void imprimerCompteurs(unsigned tabCompteur[],unsigned nbEtage) {
+   assert(tabCompteur != NULL);
+   for (unsigned etage = 0, index = 0; etage < nbEtage; ++etage) {
+      unsigned espaces = (nbEtage - (etage + 1)) * 3;
+      if (espaces > 0)
+         printf("%*c", espaces, ' ');
+      for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
+         printf("%5u ", tabCompteur[index]);
+      }
+      printf("\n");
+   }
+}
 
-        pos += etage;
-    }
+
+void parcoursBille(unsigned *tab, unsigned nbEtage) {
+   unsigned pos = 0;
+   for (unsigned etage = 1; etage <= nbEtage; ++etage) {
+      ++tab[pos];
+      if (rand() % 2) ++pos;
+
+      pos += etage;
+   }
 }
 
 
 unsigned nbClous(unsigned nbEtage) {
-    return nbEtage * (nbEtage + 1) / 2;
+   return nbEtage * (nbEtage + 1) / 2;
 }
 
 /* Fonction de check temp
