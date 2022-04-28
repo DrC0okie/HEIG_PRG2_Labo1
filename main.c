@@ -78,7 +78,7 @@ unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
 void imprimerCompteurs(unsigned tabCompteur[], unsigned nbEtage) {
    assert(tabCompteur != NULL);
    for (unsigned etage = 0, index = 0; etage < nbEtage; ++etage) {
-      printf("%*s", (nbEtage - (etage + 1)) * 3, "");
+      printf("%*s", (nbEtage - etage - 1) * 3, "");
       for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
          printf("%5u ", tabCompteur[index]);
       }
