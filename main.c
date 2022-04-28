@@ -4,7 +4,7 @@ Nom du fichier : main.cpp
 Nom du labo    : Laboratoire no. 1
 Auteur(s)      : Patrick Furrer Timothée Van Hove
 Date creation  : 25 avril 2022
-But            : Génréer une planche de Galton et afficher un histograme
+But            : Générer une planche de Galton et afficher un histogramme
                  représentant la répartition
 
 Remarque(s)    : <à compléter>
@@ -16,11 +16,9 @@ Compilateur    : Mingw-w64 gcc 11.2.0
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <string.h>
 #include <time.h>
 
 const unsigned MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20;
-const char *MSG_ERREUR = "Saisie incorrecte. Veuillez SVP recommencer.";
 const char *MSG_BILLES = "Entrez le nombre de billes";
 const char *MSG_RANGEES = "Entrez le nombre de rangees de compteurs";
 
@@ -28,23 +26,17 @@ void viderBuffer(void);
 
 unsigned nbClous(unsigned nbEtage);
 
-unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
-                           unsigned max);
+unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max);
 
 void parcoursBille(unsigned *tab, unsigned nbEtage);
 
 void imprimerCompteurs(unsigned *tabCompteur, unsigned nbEtage);
 
-
 int main(void) {
    srand((unsigned) time(NULL));
-   unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MSG_ERREUR, MIN_BILLE,
-                                         MAX_BILLE);
-   unsigned nbEtage = entreeUtilisateur(MSG_RANGEES, MSG_ERREUR, MIN_RANGEE,
-                                        MAX_RANGEE);
-
+   unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MIN_BILLE, MAX_BILLE);
+   unsigned nbEtage = entreeUtilisateur(MSG_RANGEES, MIN_RANGEE, MAX_RANGEE);
    unsigned *tabCompteur = calloc(nbClous(nbEtage), sizeof(unsigned));
-
 
    for (unsigned bille = 0; bille < nbBilles; ++bille) {
       parcoursBille(tabCompteur, nbEtage);
@@ -61,19 +53,17 @@ void viderBuffer(void) {
    while ((c = getchar()) != '\n' && c != EOF);
 }
 
-unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
-                           unsigned max) {
+unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max) {
    printf("%s [%u - %u] :", msg, min, max);
    unsigned entree = 0;
    while (scanf("%u", &entree) != 1 || entree < min || entree > max) {
       viderBuffer();
-      printf("%s\n", msgErreur);
+      printf("%s\n", "Saisie incorrecte. Veuillez SVP recommencer.");
       printf("%s [%u - %u] :", msg, min, max);
    }
    viderBuffer();
    return entree;
 }
-
 
 void imprimerCompteurs(unsigned tabCompteur[], unsigned nbEtage) {
    assert(tabCompteur != NULL);
@@ -87,17 +77,16 @@ void imprimerCompteurs(unsigned tabCompteur[], unsigned nbEtage) {
    }
 }
 
-
 void parcoursBille(unsigned *tab, unsigned nbEtage) {
    unsigned pos = 0;
    for (unsigned etage = 1; etage <= nbEtage; ++etage) {
       ++tab[pos];
-      if (rand() % 2) ++pos;
+      if (rand() % 2)
+         ++pos;
 
       pos += etage;
    }
 }
-
 
 unsigned nbClous(unsigned nbEtage) {
    return nbEtage * (nbEtage + 1) / 2;
