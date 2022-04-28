@@ -17,6 +17,7 @@ Compilateur    : Mingw-w64 gcc 11.2.0
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <time.h>
 
 const unsigned MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20;
 const char *MSG_ERREUR = "Saisie incorrecte. Veuillez SVP recommencer.";
@@ -37,6 +38,7 @@ void imprimerCompteurs(unsigned *tabCompteur, unsigned nbEtage);
 
 
 int main(void) {
+   srand((unsigned)time(NULL));
    unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MSG_ERREUR, MIN_BILLE,
                                          MAX_BILLE);
    unsigned nbEtage = entreeUtilisateur(MSG_RANGEES, MSG_ERREUR, MIN_RANGEE,
@@ -51,6 +53,7 @@ int main(void) {
 
    imprimerCompteurs(tabCompteur, nbEtage);
    free(tabCompteur);
+   getchar();
    return EXIT_SUCCESS;
 }
 
