@@ -36,9 +36,8 @@ void parcoursBille(unsigned *tab, unsigned nbEtage);
 void imprimerCompteurs(unsigned *tabCompteur, unsigned nbEtage);
 
 
-
 int main(void) {
-   srand((unsigned)time(NULL));
+   srand((unsigned) time(NULL));
    unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MSG_ERREUR, MIN_BILLE,
                                          MAX_BILLE);
    unsigned nbEtage = entreeUtilisateur(MSG_RANGEES, MSG_ERREUR, MIN_RANGEE,
@@ -76,12 +75,10 @@ unsigned entreeUtilisateur(const char *msg, const char *msgErreur, unsigned min,
 }
 
 
-void imprimerCompteurs(unsigned tabCompteur[],unsigned nbEtage) {
+void imprimerCompteurs(unsigned tabCompteur[], unsigned nbEtage) {
    assert(tabCompteur != NULL);
    for (unsigned etage = 0, index = 0; etage < nbEtage; ++etage) {
-      unsigned espaces = (nbEtage - (etage + 1)) * 3;
-      if (espaces > 0)
-         printf("%*c", espaces, ' ');
+      printf("%*s", (nbEtage - (etage + 1)) * 3, "");
       for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
          printf("%5u ", tabCompteur[index]);
       }
