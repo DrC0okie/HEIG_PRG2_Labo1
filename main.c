@@ -16,9 +16,11 @@ Compilateur    : Mingw-w64 gcc 11.2.0
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 #include <time.h>
 
-const unsigned MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20;
+const unsigned MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20,
+   RES_HISTOGRAMME = 15;
 const char *MSG_BILLES = "Entrez le nombre de billes";
 const char *MSG_RANGEES = "Entrez le nombre de rangees de compteurs";
 
@@ -30,19 +32,39 @@ unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max);
 
 void parcoursBille(unsigned *tab, unsigned nbEtage);
 
-void imprimerCompteurs(unsigned *tabCompteur, unsigned nbEtage);
+void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages, unsigned
+nbChiffres);
+
+void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages, unsigned
+nbChiffres);
+
+unsigned valeurMax(const unsigned tab[], size_t taille);
 
 int main(void) {
+   //Amorcer le generateur aleatoire
    srand((unsigned) time(NULL));
-   unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MIN_BILLE, MAX_BILLE);
-   unsigned nbEtage = entreeUtilisateur(MSG_RANGEES, MIN_RANGEE, MAX_RANGEE);
-   unsigned *tabCompteur = calloc(nbClous(nbEtage), sizeof(unsigned));
 
-   for (unsigned bille = 0; bille < nbBilles; ++bille) {
-      parcoursBille(tabCompteur, nbEtage);
+   //Entrees utilisateur
+   unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MIN_BILLE, MAX_BILLE);
+   unsigned nbEtages = entreeUtilisateur(MSG_RANGEES, MIN_RANGEE, MAX_RANGEE);
+
+   unsigned nbChiffres = (unsigned) log10(nbBilles) + 1;
+
+   //Allocation du tableau des compteurs
+   unsigned *tabCompteur = calloc(nbClous(nbEtages), sizeof(unsigned));
+
+   //Simulation du parcours de la bille
+   if (tabCompteur != NULL) {
+      for (unsigned bille = 0; bille < nbBilles; ++bille) {
+         parcoursBille(tabCompteur, nbEtages);
+      }
    }
 
-   imprimerCompteurs(tabCompteur, nbEtage);
+   imprimerCompteurs(tabCompteur, nbEtages, nbChiffres);
+   printf("%s", "\n");
+   imprimerHistogramme(tabCompteur, nbEtages, nbChiffres);
+
+   //Liberer la memoire allouee
    free(tabCompteur);
    getchar();
    return EXIT_SUCCESS;
@@ -65,31 +87,63 @@ unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max) {
    return entree;
 }
 
-void imprimerCompteurs(unsigned tabCompteur[], unsigned nbEtage) {
-   assert(tabCompteur != NULL);
-   assert(nbEtage > 9 && nbEtage < 21);
-   for (unsigned etage = 0, index = 0; etage < nbEtage; ++etage) {
-      printf("%*s", (nbEtage - etage - 1) * 3, "");
+void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages, unsigned
+nbChiffres) {
+   for (unsigned etage = 0, index = 0; etage < nbEtages; ++etage) {
+      printf("%*s ", (nbEtages - etage - 1) * 3, "");
       for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
-         printf("%5u ", tabCompteur[index]);
+         printf("%*u ", nbChiffres, tabCompteur[index]);
       }
-      printf("\n");
+      printf("%s", "\n");
    }
 }
 
-void parcoursBille(unsigned *tab, unsigned nbEtage) {
+void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages, unsigned
+nbChiffres) {
+   //Recuperer l'index du dernier etage du tableau
+   unsigned indexDernierEtage = nbClous(nbEtages) - nbEtages;
+
+   //Recuperer la valeur maximum de tous les compteurs du dernier etage
+   unsigned valMax = valeurMax(tabCompteur + indexDernierEtage, nbEtages);
+
+   for (unsigned i = RES_HISTOGRAMME; i > 0; --i) {
+      for (unsigned j = 0; j < nbEtages; ++j) {
+         char c = ' ';
+         unsigned valeurCompteur = tabCompteur[indexDernierEtage + j];
+
+         //Calcul de la hauteur de l'histogramme pour ce compteur entre 0 et 15
+         double hauteur = round(valeurCompteur * (double)RES_HISTOGRAMME / valMax);
+
+         //Imprimer '*' ou ' '
+         if(hauteur >= i)
+            c = '*';
+         printf(" %*c", nbChiffres, c);
+      }
+      printf("%s", "\n");
+   }
+}
+
+unsigned valeurMax(const unsigned tab[], size_t taille) {
+   unsigned max = 0;
+   for (size_t i = 0; i < taille; ++i) {
+      if (tab[i] > max)
+         max = tab[i];
+   }
+   return max;
+}
+
+void parcoursBille(unsigned *tab, unsigned nbEtages) {
    unsigned pos = 0;
-   for (unsigned etage = 1; etage <= nbEtage; ++etage) {
+   for (unsigned etage = 1; etage <= nbEtages; ++etage) {
       ++tab[pos];
       if (rand() % 2)
          ++pos;
-
       pos += etage;
    }
 }
 
-unsigned nbClous(unsigned nbEtage) {
-   return nbEtage * (nbEtage + 1) / 2;
+unsigned nbClous(unsigned nbEtages) {
+   return nbEtages * (nbEtages + 1) / 2;
 }
 
 /* Fonction de check temp
