@@ -32,11 +32,11 @@ unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max);
 
 void parcoursBille(unsigned *tab, unsigned nbEtage);
 
-void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages, unsigned
-nbChiffres);
+void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages);
 
-void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages, unsigned
-nbChiffres);
+void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages);
+
+unsigned nbChiffre(unsigned nombre);
 
 unsigned valeurMax(const unsigned tab[], size_t taille);
 
@@ -48,7 +48,7 @@ int main(void) {
    unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MIN_BILLE, MAX_BILLE);
    unsigned nbEtages = entreeUtilisateur(MSG_RANGEES, MIN_RANGEE, MAX_RANGEE);
 
-   unsigned nbChiffres = (unsigned) log10(nbBilles) + 1;
+
 
    //Allocation du tableau des compteurs
    unsigned *tabCompteur = calloc(nbClous(nbEtages), sizeof(unsigned));
@@ -60,9 +60,9 @@ int main(void) {
       }
    }
 
-   imprimerCompteurs(tabCompteur, nbEtages, nbChiffres);
-   printf("%s", "\n");
-   imprimerHistogramme(tabCompteur, nbEtages, nbChiffres);
+   imprimerCompteurs(tabCompteur, nbEtages);
+   printf("\n");
+   imprimerHistogramme(tabCompteur, nbEtages);
 
    //Liberer la memoire allouee
    free(tabCompteur);
@@ -87,19 +87,17 @@ unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max) {
    return entree;
 }
 
-void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages, unsigned
-nbChiffres) {
+void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages) {
    for (unsigned etage = 0, index = 0; etage < nbEtages; ++etage) {
       printf("%*s ", (nbEtages - etage - 1) * 3, "");
       for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
-         printf("%*u ", nbChiffres, tabCompteur[index]);
+         printf("%*u ", nbChiffre(nbEtages), tabCompteur[index]);
       }
-      printf("%s", "\n");
+      printf("\n");
    }
 }
 
-void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages, unsigned
-nbChiffres) {
+void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages) {
    //Recuperer l'index du dernier etage du tableau
    unsigned indexDernierEtage = nbClous(nbEtages) - nbEtages;
 
@@ -117,9 +115,9 @@ nbChiffres) {
          //Imprimer '*' ou ' '
          if(hauteur >= i)
             c = '*';
-         printf(" %*c", nbChiffres, c);
+         printf(" %*c", nbChiffre(nbEtages), c);
       }
-      printf("%s", "\n");
+      printf("\n");
    }
 }
 
@@ -146,6 +144,9 @@ unsigned nbClous(unsigned nbEtages) {
    return nbEtages * (nbEtages + 1) / 2;
 }
 
+unsigned nbChiffre(unsigned nombre) {
+    return (unsigned) log10(nombre) + 1;
+}
 /* Fonction de check temp
  *     for (unsigned etage = 0, index = 0; etage <= nbEtage; ++etage) {
         unsigned summ = 0;
