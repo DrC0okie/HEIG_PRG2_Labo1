@@ -88,10 +88,11 @@ unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max) {
 }
 
 void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages) {
+   unsigned nbChiffreMax = nbChiffre(tabCompteur[0]);
    for (unsigned etage = 0, index = 0; etage < nbEtages; ++etage) {
       printf("%*s ", (nbEtages - etage - 1) * 3, "");
       for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
-         printf("%*u ", nbChiffre(tabCompteur[0]), tabCompteur[index]);
+         printf("%*u ", nbChiffreMax, tabCompteur[index]);
       }
       printf("\n");
    }
@@ -103,7 +104,7 @@ void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages) {
 
    //Recuperer la valeur maximum de tous les compteurs du dernier etage
    unsigned valMax = valeurMax(tabCompteur + indexDernierEtage, nbEtages);
-
+   unsigned nbChiffreMax = nbChiffre(tabCompteur[0]);
    for (unsigned i = RES_HISTOGRAMME; i > 0; --i) {
       for (unsigned j = 0; j < nbEtages; ++j) {
          char c = ' ';
@@ -115,7 +116,7 @@ void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages) {
          //Imprimer '*' ou ' '
          if(hauteur >= i)
             c = '*';
-         printf(" %*c", nbChiffre(tabCompteur[0]), c);
+         printf(" %*c", nbChiffreMax, c);
       }
       printf("\n");
    }
