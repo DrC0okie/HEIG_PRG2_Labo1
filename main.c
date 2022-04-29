@@ -91,7 +91,7 @@ void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages) {
    for (unsigned etage = 0, index = 0; etage < nbEtages; ++etage) {
       printf("%*s ", (nbEtages - etage - 1) * 3, "");
       for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
-         printf("%*u ", nbChiffre(nbEtages), tabCompteur[index]);
+         printf("%*u ", nbChiffre(tabCompteur[0]), tabCompteur[index]);
       }
       printf("\n");
    }
@@ -115,7 +115,7 @@ void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages) {
          //Imprimer '*' ou ' '
          if(hauteur >= i)
             c = '*';
-         printf(" %*c", nbChiffre(nbEtages), c);
+         printf(" %*c", nbChiffre(tabCompteur[0]), c);
       }
       printf("\n");
    }
@@ -147,14 +147,3 @@ unsigned nbClous(unsigned nbEtages) {
 unsigned nbChiffre(unsigned nombre) {
     return (unsigned) log10(nombre) + 1;
 }
-/* Fonction de check temp
- *     for (unsigned etage = 0, index = 0; etage <= nbEtage; ++etage) {
-        unsigned summ = 0;
-        for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
-            summ+= tabCompteur[index];
-        }
-        printf("Check summ %d \n", summ);
-    }
-    printf("Check 1st value %d \n", tabCompteur[0]);
-    //nettoyage de la mémoire
-    */
