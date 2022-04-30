@@ -25,19 +25,29 @@ const char *MSG_BILLES = "Entrez le nombre de billes";
 const char *MSG_RANGEES = "Entrez le nombre de rangees de compteurs";
 
 void viderBuffer(void);
-
+/*
+ * Calcul le nombre de clous sur la planche
+ */
 unsigned nbClous(unsigned nbEtage);
 
 unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max);
-
+/*
+ * Incremente les compteurs en fonction du parcours de la bille
+ */
 void parcoursBille(unsigned *tab, unsigned nbEtage);
-
+/*
+ * Affiche la planche de galton : les compteurs de chaque clous
+ */
 void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages);
 
 void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages);
-
+/*
+ * Retourne le nombre de chiffre dans un nombre non signe
+ */
 unsigned nbChiffre(unsigned nombre);
-
+/*
+ * Donne la valeur max dans un tableau (ou une partie)
+ */
 unsigned valeurMax(const unsigned tab[], size_t taille);
 
 int main(void) {
@@ -48,11 +58,12 @@ int main(void) {
    unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MIN_BILLE, MAX_BILLE);
    unsigned nbEtages = entreeUtilisateur(MSG_RANGEES, MIN_RANGEE, MAX_RANGEE);
 
-
-
    //Allocation du tableau des compteurs
    unsigned *tabCompteur = calloc(nbClous(nbEtages), sizeof(unsigned));
-
+   if (tabCompteur == NULL) {
+       printf("Plus de memoire disponible\n Arret du programme");
+       return EXIT_FAILURE;
+   }
    //Simulation du parcours de la bille
    if (tabCompteur != NULL) {
       for (unsigned bille = 0; bille < nbBilles; ++bille) {
@@ -146,5 +157,7 @@ unsigned nbClous(unsigned nbEtages) {
 }
 
 unsigned nbChiffre(unsigned nombre) {
-    return (unsigned) log10(nombre) + 1;
+   if (nombre == 0)
+      return 1;
+   return (unsigned) log10(nombre) + 1;
 }
