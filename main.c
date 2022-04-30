@@ -18,33 +18,40 @@ Compilateur    : Mingw-w64 gcc 11.2.0
 #include <assert.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
 
 const unsigned MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20,
    RES_HISTOGRAMME = 15;
 const char *MSG_BILLES = "Entrez le nombre de billes";
 const char *MSG_RANGEES = "Entrez le nombre de rangees de compteurs";
+const unsigned TAILLE_BUFFER = 128;
 
 void viderBuffer(void);
+
 /*
  * Calcul le nombre de clous sur la planche
  */
 unsigned nbClous(unsigned nbEtage);
 
-unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max);
+unsigned lectureEntree(const char *msg, unsigned min, unsigned max);
+
 /*
  * Incremente les compteurs en fonction du parcours de la bille
  */
 void parcoursBille(unsigned *tab, unsigned nbEtage);
+
 /*
  * Affiche la planche de galton : les compteurs de chaque clous
  */
 void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages);
 
 void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages);
+
 /*
  * Retourne le nombre de chiffre dans un nombre non signe
  */
 unsigned nbChiffre(unsigned nombre);
+
 /*
  * Donne la valeur max dans un tableau (ou une partie)
  */
@@ -55,14 +62,14 @@ int main(void) {
    srand((unsigned) time(NULL));
 
    //Entrees utilisateur
-   unsigned nbBilles = entreeUtilisateur(MSG_BILLES, MIN_BILLE, MAX_BILLE);
-   unsigned nbEtages = entreeUtilisateur(MSG_RANGEES, MIN_RANGEE, MAX_RANGEE);
+   unsigned nbBilles = lectureEntree(MSG_BILLES, MIN_BILLE, MAX_BILLE);
+   unsigned nbEtages = lectureEntree(MSG_RANGEES, MIN_RANGEE, MAX_RANGEE);
 
    //Allocation du tableau des compteurs
    unsigned *tabCompteur = calloc(nbClous(nbEtages), sizeof(unsigned));
    if (tabCompteur == NULL) {
-       printf("Plus de memoire disponible\n Arret du programme");
-       return EXIT_FAILURE;
+      printf("Plus de memoire disponible\n Arret du programme");
+      return EXIT_FAILURE;
    }
    //Simulation du parcours de la bille
    if (tabCompteur != NULL) {
@@ -86,15 +93,34 @@ void viderBuffer(void) {
    while ((c = getchar()) != '\n' && c != EOF);
 }
 
-unsigned entreeUtilisateur(const char *msg, unsigned min, unsigned max) {
-   printf("%s [%u - %u] :", msg, min, max);
+unsigned lectureEntree(const char *msg, unsigned min, unsigned max) {
+   int succes;
    unsigned entree = 0;
-   while (scanf("%u", &entree) != 1 || entree < min || entree > max) {
-      viderBuffer();
-      printf("%s\n", "Saisie incorrecte. Veuillez SVP recommencer.");
+   do {
       printf("%s [%u - %u] :", msg, min, max);
-   }
-   viderBuffer();
+
+      //Creer 2 buffers de 128 Bytes pour avoir de la marge et les initialiser à 0
+      char bufferTemp[TAILLE_BUFFER], bufferComp[TAILLE_BUFFER];
+      memset(bufferTemp, 0, TAILLE_BUFFER);
+      memset(bufferComp, 0, TAILLE_BUFFER);
+
+      //Stocker la valeur dans le buffer #1
+      scanf("%s", bufferTemp);
+      viderBuffer();
+
+      //Recuperer la valeur au format unsigned depuis le buffer #1
+      sscanf(bufferTemp, "%u", &entree);
+
+      //stocker la valeur au format char* dans le buffer #2
+      sprintf(bufferComp, "%u", entree);
+
+      //Comparer les 2 buffer
+      succes = memcmp(bufferTemp, bufferComp, TAILLE_BUFFER);
+      if(succes || entree < min || entree > max){
+         printf("%s\n", "Saisie incorrecte. Veuillez SVP recommencer.");
+         succes = 1;
+      }
+   } while (succes);
    return entree;
 }
 
@@ -122,10 +148,10 @@ void imprimerHistogramme(const unsigned tabCompteur[], unsigned nbEtages) {
          unsigned valeurCompteur = tabCompteur[indexDernierEtage + j];
 
          //Calcul de la hauteur de l'histogramme pour ce compteur entre 0 et 15
-         double hauteur = round(valeurCompteur * (double)RES_HISTOGRAMME / valMax);
+         double hauteur = round(valeurCompteur * (double) RES_HISTOGRAMME / valMax);
 
          //Imprimer '*' ou ' '
-         if(hauteur >= i)
+         if (hauteur >= i)
             c = '*';
          printf(" %*c", nbChiffreMax, c);
       }
