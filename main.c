@@ -1,5 +1,4 @@
-/*
------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------
 Nom du fichier : main.cpp
 Nom du labo    : Laboratoire no. 1
 Auteur(s)      : Patrick Furrer Timothée Van Hove
@@ -10,8 +9,7 @@ But            : Générer une planche de Galton et afficher un histogramme
 Remarque(s)    : <à compléter>
 
 Compilateur    : Mingw-w64 gcc 11.2.0
------------------------------------------------------------------------------------
-*/
+-----------------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,9 +19,9 @@ Compilateur    : Mingw-w64 gcc 11.2.0
 #include <inttypes.h>
 
 const uint32_t MIN_BILLE = 1000, MAX_BILLE = 30000, MIN_RANGEE = 10, MAX_RANGEE = 20,
-   RES_HISTOGRAMME = 15, TAILLE_BUFFER = 128;
-const char *MSG_BILLES = "Entrez le nombre de billes";
-const char *MSG_RANGEES = "Entrez le nombre de rangees de compteurs";
+   RESOLUTION_HISTO = 15, TAILLE_BUFFER = 128;
+const char* MSG_BILLES = "Entrez le nombre de billes";
+const char* MSG_RANGEES = "Entrez le nombre de rangees de compteurs";
 
 //Vide le buffer stdin
 void viderBuffer(void);
@@ -33,19 +31,19 @@ uint32_t nbClous(uint32_t nbEtage);
 
 //Lis l'entree utilisateur et renvoie la valeur lue si l'entree est valide si non,
 //invite l'utilisateur a recommencer avec un message d'erreur
-uint32_t lectureEntree(const char *msg, uint32_t min, uint32_t max);
+uint32_t lectureEntree(const char* msg, uint32_t min, uint32_t max);
 
 //Incremente les compteurs en fonction du parcours de la bille
-void parcoursBille(uint32_t *tab, uint32_t nbEtage);
+void parcoursBille(uint32_t* tab, uint32_t nbEtage);
 
 //Affiche les compteurs de la planche de Galton (chaque clous). Fait varier
 //l'espace avant les compteurs de 1 (1 ligne / 2) si nbBilles a une nombre de
 // chiffres pair
-void imprimerCompteurs(uint32_t tabCompteur[], uint32_t nbEtages);
+void imprimerCompteurs(const uint32_t* tabCompteur, uint32_t nbEtages);
 
 //Affiche l'histogramme de la distribution du nbre de billes dans les
 //compteurs du dernier etage
-void imprimerHistogramme(uint32_t tabCompteur[], uint32_t nbEtages);
+void imprimerHistogramme(const uint32_t* tabCompteur, uint32_t nbEtages);
 
 //Retourne le nombre de chiffre dans un nombre non signe
 uint32_t longueurNbre(uint32_t nombre);
@@ -54,7 +52,7 @@ uint32_t longueurNbre(uint32_t nombre);
 uint32_t estPair(uint32_t nombre);
 
 //Donne la valeur max dans un tableau (ou une partie)
-uint32_t valeurMax(const uint32_t tab[], size_t taille);
+uint32_t valeurMax(const uint32_t* tab, size_t taille);
 
 int main(void) {
    //Amorcer le generateur aleatoire
@@ -90,8 +88,8 @@ void viderBuffer(void) {
    while ((c = getchar()) != '\n' && c != EOF);
 }
 
-uint32_t lectureEntree(const char *msg, uint32_t min, uint32_t max) {
-   int echec, echecComparaison;
+uint32_t lectureEntree(const char* msg, uint32_t min, uint32_t max) {
+   int echec;
    uint32_t entree = 0;
    do {
       echec = 0;
@@ -108,8 +106,7 @@ uint32_t lectureEntree(const char *msg, uint32_t min, uint32_t max) {
       //Stocker la valeur au format char* dans le buffer #2
       sprintf(bufferComp, "%"PRIu32, entree);
       //Comparer les 2 buffers, recommencer s'ils sont différents
-      echecComparaison = strcmp(bufferTemp, bufferComp);
-      if (echecComparaison || entree < min || entree > max) {
+      if (strcmp(bufferTemp, bufferComp) || entree < min || entree > max) {
          printf("%s\n", "Saisie incorrecte. Veuillez SVP recommencer.");
          echec = 1;
       }
@@ -117,7 +114,7 @@ uint32_t lectureEntree(const char *msg, uint32_t min, uint32_t max) {
    return entree;
 }
 
-void imprimerCompteurs(uint32_t tabCompteur[], uint32_t nbEtages) {
+void imprimerCompteurs(const uint32_t* tabCompteur, uint32_t nbEtages) {
    uint32_t nbChiffres = longueurNbre(tabCompteur[0]);
    //Calcul du centre de l'affichage sur la base du dernier etage de compteurs
    uint32_t nbEspaces = (nbChiffres + 1) * nbEtages / 2;
@@ -135,18 +132,18 @@ void imprimerCompteurs(uint32_t tabCompteur[], uint32_t nbEtages) {
    }
 }
 
-void imprimerHistogramme(uint32_t tabCompteur[], uint32_t nbEtages) {
+void imprimerHistogramme(const uint32_t* tabCompteur, uint32_t nbEtages) {
    //Recuperer l'index du dernier etage du tableau
    uint32_t indexDernierEtage = nbClous(nbEtages) - nbEtages;
    //Recuperer la valeur maximum de tous les compteurs du dernier etage
    uint32_t valMax = valeurMax(tabCompteur + indexDernierEtage, nbEtages);
    uint32_t nbChiffres = longueurNbre(tabCompteur[0]);
-   for (uint32_t i = RES_HISTOGRAMME; i > 0; --i) {
+   for (uint32_t i = RESOLUTION_HISTO; i > 0; --i) {
       for (uint32_t j = 0; j < nbEtages; ++j) {
          char c = ' ';
          uint32_t valeurCompteur = tabCompteur[indexDernierEtage + j];
          //Calcul de la hauteur de l'histogramme pour ce compteur entre 0 et 15
-         double hauteur = round(valeurCompteur * (double) RES_HISTOGRAMME / valMax);
+         double hauteur = round(valeurCompteur * (double) RESOLUTION_HISTO / valMax);
          //Imprimer '*' ou ' '
          if (hauteur >= i)
             c = '*';
@@ -156,7 +153,7 @@ void imprimerHistogramme(uint32_t tabCompteur[], uint32_t nbEtages) {
    }
 }
 
-uint32_t valeurMax(const uint32_t tab[], size_t taille) {
+uint32_t valeurMax(const uint32_t* tab, size_t taille) {
    uint32_t max = 0;
    for (size_t i = 0; i < taille; ++i) {
       if (tab[i] > max)
@@ -165,7 +162,7 @@ uint32_t valeurMax(const uint32_t tab[], size_t taille) {
    return max;
 }
 
-void parcoursBille(uint32_t *tab, uint32_t nbEtages) {
+void parcoursBille(uint32_t* tab, uint32_t nbEtages) {
    uint32_t pos = 0;
    for (uint32_t etage = 1; etage <= nbEtages; ++etage) {
       ++tab[pos];
