@@ -60,7 +60,6 @@ unsigned valeurMax(const unsigned tab[], size_t taille);
 int main(void) {
    //Amorcer le generateur aleatoire
    srand((unsigned) time(NULL));
-
    //Entrees utilisateur
    unsigned nbBilles = lectureEntree(MSG_BILLES, MIN_BILLE, MAX_BILLE);
    unsigned nbEtages = lectureEntree(MSG_RANGEES, MIN_RANGEE, MAX_RANGEE);
@@ -72,10 +71,8 @@ int main(void) {
       return EXIT_FAILURE;
    }
    //Simulation du parcours de la bille
-   if (tabCompteur != NULL) {
-      for (unsigned bille = 0; bille < nbBilles; ++bille) {
-         parcoursBille(tabCompteur, nbEtages);
-      }
+   for (unsigned bille = 0; bille < nbBilles; ++bille) {
+      parcoursBille(tabCompteur, nbEtages);
    }
 
    imprimerCompteurs(tabCompteur, nbEtages);
