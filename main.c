@@ -98,25 +98,20 @@ unsigned lectureEntree(const char *msg, unsigned min, unsigned max) {
    unsigned entree = 0;
    do {
       printf("%s [%u - %u] :", msg, min, max);
-
       //Creer 2 buffers de 128 Bytes pour avoir de la marge et les initialiser à 0
       char bufferTemp[TAILLE_BUFFER], bufferComp[TAILLE_BUFFER];
       memset(bufferTemp, 0, TAILLE_BUFFER);
       memset(bufferComp, 0, TAILLE_BUFFER);
-
       //Stocker la valeur dans le buffer #1
       scanf("%s", bufferTemp);
       viderBuffer();
-
       //Recuperer la valeur au format unsigned depuis le buffer #1
       sscanf(bufferTemp, "%u", &entree);
-
       //stocker la valeur au format char* dans le buffer #2
       sprintf(bufferComp, "%u", entree);
-
-      //Comparer les 2 buffer
+      //Comparer les 2 buffer, recommencer s'ils ont différents
       succes = memcmp(bufferTemp, bufferComp, TAILLE_BUFFER);
-      if(succes || entree < min || entree > max){
+      if (succes || entree < min || entree > max) {
          printf("%s\n", "Saisie incorrecte. Veuillez SVP recommencer.");
          succes = 1;
       }
@@ -127,7 +122,9 @@ unsigned lectureEntree(const char *msg, unsigned min, unsigned max) {
 void imprimerCompteurs(const unsigned tabCompteur[], unsigned nbEtages) {
    unsigned nbChiffreMax = nbChiffre(tabCompteur[0]);
    for (unsigned etage = 0, index = 0; etage < nbEtages; ++etage) {
-      printf("%*s ", (nbEtages - etage - 1) * 3, "");
+      //Calcul du décalage pour un nombre de chiffres de billes impair
+      unsigned decalage = ((nbChiffreMax + 1) % 2) * (nbEtages - etage) / 2;
+      printf("%*s ", ((nbEtages - etage - 1) * 3) - decalage, "");
       for (unsigned colonne = 0; colonne <= etage; ++colonne, ++index) {
          printf("%*u ", nbChiffreMax, tabCompteur[index]);
       }
