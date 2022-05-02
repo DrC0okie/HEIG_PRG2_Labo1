@@ -87,7 +87,6 @@ int main(void) {
 
    //Liberer la memoire allouee
    free(tabCompteur);
-   getchar();
    return EXIT_SUCCESS;
 }
 
