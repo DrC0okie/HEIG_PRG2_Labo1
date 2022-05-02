@@ -1,9 +1,9 @@
 /*-----------------------------------------------------------------------------------
-Nom du fichier :  main.cpp
+Nom du fichier :  main.c
 Nom du labo    :  Laboratoire no. 1
-Auteur(s)      :  Patrick Furrer Timothee Van Hove
+Auteur(s)      :  Patrick Furrer, Timothee Van Hove
 Date creation  :  25 avril 2022
-But            :  Generer une planche de Galton et simuler le passage de chaque
+description    :  Generer une planche de Galton et simuler le passage de chaque
                   bille au travers. Afficher le representation de la planche de
                   galton avec des compteurs qui s'incrementent au passage de
                   chaque bille. Afficher un histogramme representant la
@@ -15,7 +15,7 @@ Remarque(s)    :  - Toutes les saisies utilisateur sont controlees. L'utilisateu
                   - Le programme se termine automatiquement apres l'affichage de
                   l'histogramme
 
-Compilateur    : mingw-w64 gcc 11.2.0
+Compilateur    : Mingw-w64 gcc 11.2.0
 -----------------------------------------------------------------------------------*/
 
 #include <stdio.h>
